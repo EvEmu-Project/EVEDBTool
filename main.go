@@ -22,7 +22,7 @@ var ui cli.Ui
 
 func realMain() int {
 	//Define version and print on startup
-	version := "0.0.1"
+	version := "0.0.2"
 	log.Info("EVEDBTool ", version)
 
 	//Initialize config, logging and closehandler

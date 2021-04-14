@@ -30,6 +30,23 @@ func getDB() *sql.DB { //Create database connection
 	return db
 }
 
+func checkDBConnection() {
+	tries := 0
+	for tries < 1000 {
+		db := getDB()
+		_, err := db.Query("SELECT 1") //Query doesn't need to do anything, we just use to see if DB is not dead
+		if err == nil {
+			db.Close()
+			log.Info("DB connection re-established.")
+			break
+		}
+		db.Close()
+		log.Info("DB connection died, writing for server...")
+		time.Sleep(2 * time.Second)
+		tries += 1
+	}
+}
+
 func GetNumberOfTables() int {
 	db := getDB()
 	var value string
@@ -144,6 +161,8 @@ func InstallBase() {
 		n, err := migrate.Exec(db, "mysql", migrationSource, migrate.Up)
 		if err != nil {
 			log.Error("Error installing migration: ", err)
+			//Check if DB died
+			checkDBConnection()
 		}
 		db.Close()
 		log.Info("Applied ", n, " migrations!")
