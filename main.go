@@ -55,6 +55,9 @@ func realMain() int {
 			"skip": func() (cli.Command, error) {
 				return &SkipCommand{}, nil
 			},
+			"seed": func() (cli.Command, error) {
+				return &SeedCommand{}, nil
+			},
 		},
 		HelpFunc: cli.BasicHelpFunc("evedbtool"),
 		Version:  version,

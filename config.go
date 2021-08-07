@@ -29,6 +29,12 @@ func initConfig() {
 			viper.SetDefault("migrations-dir", "migrations")
 			viper.SetDefault("base-dir", "base")
 
+			var seededRegions [1]string
+			seededRegions[0] = "Derelik"
+
+			viper.SetDefault("seed-regions", seededRegions)
+			viper.SetDefault("seed-saturation", 80)
+
 			//Write configuration file to disk
 			viper.WriteConfigAs("./evedb.yaml")
 		} else {
