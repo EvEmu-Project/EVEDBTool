@@ -6,9 +6,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/spf13/viper"
+	"gopkg.in/jcmturner/rpc.v1/mstypes"
 )
 
 type SeedCommand struct {
@@ -96,7 +98,7 @@ func buildSeedMigration(seedQueries []string) *migrate.Migration {
 }
 
 func getQuery(regionValue string, saturation int) string {
-	query := `set @regionid=RVAL; set @saturation=SVAL; create temporary table if not exists tStations (stationId int, solarSystemID int, regionID int, corporationID int, security float); truncate table tStations; select round(count(stationID)*@saturation) into @lim from staStations where regionID=@regionid ; set @i=0; insert into tStations   select stationID,solarSystemID,regionID, corporationID, security from staStations where (@i:=@i+1)<=@lim AND regionID=@regionid  order by rand(); INSERT INTO mktOrders (typeID, ownerID, regionID, stationID, price, volEntered, volRemaining, issued, minVolume, duration, solarSystemID, jumps)   SELECT typeID, corporationID, regionID, stationID, basePrice / security, 550, 550, 132478179209572976, 1, 250, solarSystemID, 1   FROM tStations, invTypes inner join invGroups USING (groupID)   WHERE invTypes.published = 1   AND invGroups.categoryID IN (4, 5, 6, 7, 8, 9, 16, 17, 18, 22, 23, 24, 25, 32, 34, 35, 39, 40, 41, 42, 43, 46); UPDATE mktOrders SET price = 100 WHERE price = 0;`
+	query := `set @regionid=RVAL; set @saturation=SVAL; create temporary table if not exists tStations (stationId int, solarSystemID int, regionID int, corporationID int, security float); truncate table tStations; select round(count(stationID)*@saturation) into @lim from staStations where regionID=@regionid ; set @i=0; insert into tStations   select stationID,solarSystemID,regionID, corporationID, security from staStations where (@i:=@i+1)<=@lim AND regionID=@regionid  order by rand(); INSERT INTO mktOrders (typeID, ownerID, regionID, stationID, price, volEntered, volRemaining, issued, minVolume, duration, solarSystemID, jumps)   SELECT typeID, corporationID, regionID, stationID, basePrice / security, 550, 550, TSTAMP, 1, 250, solarSystemID, 1   FROM tStations, invTypes inner join invGroups USING (groupID)   WHERE invTypes.published = 1   AND invGroups.categoryID IN (4, 5, 6, 7, 8, 9, 16, 17, 18, 22, 23, 24, 25, 32, 34, 35, 39, 40, 41, 42, 43, 46); UPDATE mktOrders SET price = 100 WHERE price = 0;`
 	regionMap := map[string]int{
 		"Derelik":              10000001,
 		"The Forge":            10000002,
@@ -200,7 +202,6 @@ func getQuery(regionValue string, saturation int) string {
 	var regionID string
 
 	fuzzySaturation := float32(saturation) / 100
-	query_sat := strings.Replace(query, "SVAL", fmt.Sprintf("%.2f", fuzzySaturation), 1)
 
 	if _, err := strconv.Atoi(regionValue); err == nil {
 		regionID = regionValue
@@ -215,5 +216,13 @@ func getQuery(regionValue string, saturation int) string {
 
 	log.Info(regionID)
 
-	return strings.Replace(query_sat, "RVAL", regionID, 1)
+	//Generate a Microsoft timestamp
+	tstamp := mstypes.GetFileTime(time.Now()).MSEpoch()
+
+	r := strings.NewReplacer(
+		"SVAL", fmt.Sprintf("%.2f", fuzzySaturation),
+		"RVAL", regionID,
+		"TSTAMP", strconv.FormatInt(tstamp, 10),
+	)
+	return r.Replace(query)
 }
