@@ -22,7 +22,7 @@ var ui cli.Ui
 
 func realMain() int {
 	//Define version and print on startup
-	version := "0.0.4"
+	version := "0.0.5"
 	log.Info("EVEDBTool ", version)
 
 	//Initialize config, logging and closehandler
@@ -57,6 +57,42 @@ func realMain() int {
 			},
 			"seed": func() (cli.Command, error) {
 				return &SeedCommand{}, nil
+			},
+			"dungeon": func() (cli.Command, error) {
+				return &DungeonCommand{}, nil
+			},
+			"dungeon list": func() (cli.Command, error) {
+				return &DungeonListCommand{}, nil
+			},
+			"dungeon apply": func() (cli.Command, error) {
+				return &DungeonApplyCommand{}, nil
+			},
+			"dungeon import": func() (cli.Command, error) {
+				return &DungeonImportCommand{}, nil
+			},
+			"dungeon export": func() (cli.Command, error) {
+				return &DungeonExportCommand{}, nil
+			},
+			"dungeon new": func() (cli.Command, error) {
+				return &DungeonNewCommand{}, nil
+			},
+			"dungeon delete": func() (cli.Command, error) {
+				return &DungeonDeleteCommand{}, nil
+			},
+			"dungeon add-room": func() (cli.Command, error) {
+				return &DungeonAddRoomCommand{}, nil
+			},
+			"dungeon remove-room": func() (cli.Command, error) {
+				return &DungeonRemoveRoomCommand{}, nil
+			},
+			"dungeon list-factions": func() (cli.Command, error) {
+				return &DungeonFactionListCommand{}, nil
+			},
+			"dungeon list-archetypes": func() (cli.Command, error) {
+				return &DungeonArchetypeListCommand{}, nil
+			},
+			"dungeon list-rooms": func() (cli.Command, error) {
+				return &DungeonRoomListCommand{}, nil
 			},
 		},
 		HelpFunc: cli.BasicHelpFunc("evedbtool"),

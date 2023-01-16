@@ -28,6 +28,7 @@ func initConfig() {
 			viper.SetDefault("db-database", "evemu")
 			viper.SetDefault("migrations-dir", "migrations")
 			viper.SetDefault("base-dir", "base")
+			viper.SetDefault("dungeon-dir", "dungeons")
 
 			var seededRegions [1]string
 			seededRegions[0] = "Derelik"
