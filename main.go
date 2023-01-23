@@ -20,9 +20,10 @@ func main() {
 
 var ui cli.Ui
 
+var version = "dev"
+
 func realMain() int {
 	//Define version and print on startup
-	version := "0.0.5"
 	log.Info("EVEDBTool ", version)
 
 	//Initialize config, logging and closehandler

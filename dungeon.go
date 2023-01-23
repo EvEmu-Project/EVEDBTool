@@ -268,7 +268,7 @@ func ImportDungeon(data []byte, overwrite bool) int {
 
 	// Insert rooms
 	for _, room := range dungeon.Rooms {
-		roomQuery := `INSERT INTO dunRooms (dungeonID, roomID, roomName) VALUES (?,?,?) RETURNING roomID`
+		roomQuery := `INSERT INTO dunRooms (dungeonID, roomID, roomName) VALUES (?,?,?)`
 		log.Trace("QUERY: ", roomQuery)
 		if _, err := db.Exec(roomQuery, dungeonID, roomID, room.RoomName); err != nil {
 			log.Fatal("Failed to query db; ", err)

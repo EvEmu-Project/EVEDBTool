@@ -2,3 +2,4 @@ evedb.yaml
 base/
 migrations/
 EVEDBTool
+bin/
